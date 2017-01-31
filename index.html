@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>D3 Graph Editor</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+<style type="text/css">
+body{
+    font-family: 'Open Sans Condensed','Arial Narrow', serif;
+    background: #ddd;
+    font-weight: 400;
+    font-size: 15px;
+    color: #333;
+    -webkit-font-smoothing: antialiased;
+    -moz-font-smoothing: antialiased;
+    font-smoothing: antialiased;
+}
+a{
+    color: #555;
+    text-decoration: none;
+}
+.container{
+    width: 100%;
+    clear: both;
+    position: relative;
+}
+.clr{
+    clear: both;
+    padding: 0;
+    height: 0;
+    margin: 0;
+}
+.container > header{
+    margin: 10px;
+    padding: 20px 10px 10px 10px;
+    position: relative;
+    display: block;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+    text-align: center;
+}
+.container > header h1{
+    font-size: 40px;
+    line-height: 40px;
+    margin: 0;
+    position: relative;
+    font-weight: 300;
+    color: #128680;
+    text-shadow: 1px 1px 1px rgba(255,255,255,0.7);
+}
+.container > header h1 span{
+    font-weight: 700;
+}
+.container > header h2{
+    font-size: 14px;
+    font-weight: 300;
+    margin: 0;
+    padding: 15px 0 5px 0;
+    color: #7c8e8d;
+    font-family: Cambria, Georgia, serif;
+    font-style: italic;
+    text-shadow: 1px 1px 1px rgba(255,255,255,0.9);
+}
+/* Header Style */
+.codrops-top{
+    line-height: 24px;
+    font-size: 11px;
+    background: #fff;
+    background: rgba(255, 255, 255, 0.6);
+    z-index: 101;
+    position: relative;
+    font-family: Cambria, Georgia, serif;
+    box-shadow: 1px 0px 2px rgba(0,0,0,0.2);
+}
+.codrops-top a{
+    padding: 0px 10px;
+    letter-spacing: 1px;
+    color: #333;
+    display: inline-block;
+}
+.codrops-top a:hover{
+    background: rgba(255,255,255,0.3);
+}
+.codrops-top span.right{
+    float: right;
+}
+.codrops-top span.right a{
+    float: left;
+    display: block;
+}
+/* Demo Buttons Style */
+.codrops-demos{
+    text-align:center;
+    display: block;
+    line-height: 30px;
+    padding: 5px 0px;
+}
+.codrops-demos a{
+    display: inline-block;
+    margin: 0px 4px;
+    padding: 0px 6px;
+    color: #aaa;
+    line-height: 20px;  
+    font-size: 13px;
+    text-shadow: 1px 1px 1px #fff;
+    border: 1px solid #ddd;
+    background: #ffffff; /* Old browsers */
+    background: -moz-linear-gradient(top, #ffffff 0%, #f6f6f6 47%, #ededed 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(47%,#f6f6f6), color-stop(100%,#ededed)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* IE10+ */
+    background: linear-gradient(top, #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+    box-shadow: 0px 1px 1px rgba(255, 255, 255, 0.5);
+}
+.codrops-demos a:hover{
+    color: #333;
+    box-shadow: 0px 1px 1px rgba(255, 255, 255, 0.5);
+}
+.codrops-demos a:active{
+    background: #fff;
+}
+.codrops-demos a.current-demo,
+.codrops-demos a.current-demo:hover{
+    background: #f6f6f6;
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f6f6f6', endColorstr='#f6f6f6',GradientType=0 ); /* IE6-9 */
+}
+
+
+
+</style>
+<style type="text/css">
+.tabs {
+    position: relative;
+    margin: 40px auto;
+}
+
+.tabs input {
+    position: absolute;
+    z-index: 100;
+    width: 120px;
+    height: 40px;
+    left: 0px;
+    top: 0px;
+    opacity: 0;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    filter: alpha(opacity=0);
+    cursor: pointer;
+}
+.tabs input#tab-2{
+    top: 40px;
+}
+.tabs input#tab-3{
+    top: 80px;
+}
+.tabs input#tab-4{
+    top: 120px;
+}
+
+.tabs label {
+    background: #5ba4a4;
+    background: -moz-linear-gradient(top, #5ba4a4 0%, #4e8c8a 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#5ba4a4), color-stop(100%,#4e8c8a));
+    background: -webkit-linear-gradient(top, #5ba4a4 0%,#4e8c8a 100%);
+    background: -o-linear-gradient(top, #5ba4a4 0%,#4e8c8a 100%);
+    background: -ms-linear-gradient(top, #5ba4a4 0%,#4e8c8a 100%);
+    background: linear-gradient(top, #5ba4a4 0%,#4e8c8a 100%);
+    font-size: 15px;
+    line-height: 40px;
+    height: 40px;
+    position: relative;
+    padding: 0 20px;
+    display: block;
+    width: 50px;
+    color: #385c5b;
+    letter-spacing: 1px;
+    font-weight: bold;
+    text-align: right;
+    float: left;
+    clear: both;
+    text-shadow: 1px 1px 1px rgba(255,255,255,0.3);
+    border-radius: 3px 0 0 3px;
+    box-shadow: 0px 2px 2px rgba(0,0,0,0.1);
+}
+
+.tabs label:after {
+    content: '';
+    background: #fff;
+    position: absolute;
+    right: -2px;
+    top: 0;
+    width: 2px;
+    height: 100%;
+}
+
+.tabs input:hover + label {
+    background: #5ba4a4;
+}
+
+.tabs label:first-of-type {
+    z-index: 4;
+}
+
+.tab-label-2 {
+    z-index: 3;
+}
+
+.tab-label-3 {
+    z-index: 2;
+}
+
+.tab-label-4 {
+    z-index: 1;
+}
+
+.tabs input:checked + label {
+    background: #fff;
+    z-index: 6;
+}
+
+.clear-shadow {
+    clear: both;
+}
+
+.cntnt {
+    background: #fff;
+    position: relative;
+    width: auto;
+    margin: -160px 0 0 90px;
+    min-height: 900px;
+    z-index: 5;
+    overflow: hidden;
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    border-radius: 3px;
+}
+
+.cntnt>div {
+    position: absolute;
+    top: 0;
+    padding: 10px;
+    z-index: 1;
+    opacity: 0;
+    -webkit-transition: all linear 0.5s;
+    -moz-transition: all linear 0.5s;
+    -o-transition: all linear 0.5s;
+    -ms-transition: all linear 0.5s;
+    transition: all linear 0.5s;
+}
+
+.cntnt>div{
+   width: 100%;
+}
+
+.tabs input.tab-selector-1:checked ~ .cntnt .cntnt-1,
+.tabs input.tab-selector-2:checked ~ .cntnt .cntnt-2,
+.tabs input.tab-selector-3:checked ~ .cntnt .cntnt-3,
+.tabs input.tab-selector-4:checked ~ .cntnt .cntnt-4 {
+    z-index: 99;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+    filter: alpha(opacity=100);
+    opacity: 1;
+    -webkit-transition: all ease-out 0.3s 0.3s;
+    -moz-transition: all ease-out 0.3s 0.3s;
+    -o-transition: all ease-out 0.3s 0.3s;
+    -ms-transition: all ease-out 0.3s 0.3s;
+    transition: all ease-out 0.3s 0.3s;
+}
+
+.cntnt div h2,
+.cntnt div h3{
+    color: #398080;
+}
+.cntnt div p {
+    font-size: 14px;
+    line-height: 22px;
+    font-style: italic;
+    text-align: left;
+    margin: 0;
+    color: #777;
+    padding-left: 15px;
+    font-family: Cambria, Georgia, serif;
+    border-left: 8px solid rgba(63,148,148, 0.1);
+}
+
+/* Target Tabs */
+
+.tabs-target span:nth-of-type(1):not(:target) ~ span:nth-of-type(2):not(:target) ~ .tab:nth-of-type(1),
+.tabs-target span:nth-of-type(2):target ~ .tab:nth-of-type(2),
+.tabs-target span:nth-of-type(1):target ~ .tab:nth-of-type(3)
+{
+  display: block;
+}
+
+/************************************/
+
+a {
+  text-decoration: none;
+  color: teal;
+}
+
+a:hover {
+  color: black;
+}
+
+.site-title {
+  font-weight: bold;
+  font-size: 20px;
+  margin: 0 0 8px;
+}
+
+.site-description {
+  font-weight: bold;
+  font-size: 14px;
+  margin: 0 0 20px;
+}
+
+.title {
+  margin-top: 25px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+strong {
+  font-weight: bold;
+}
+
+p {
+  margin: 0 0 10px;
+}
+
+.tab-area p {
+  font-size: 11px;
+  color: #666;
+}
+
+h3 {
+  font-weight: bold;
+  font-size: 16px;
+  margin: 0 0 10px;
+}
+
+.intro {
+  max-width: 550px;
+  margin: 50px 2%;
+}
+
+.tab-area {
+  width: 280px;
+  float: left;
+}
+
+.tab-link {
+  text-transform: uppercase;
+  font-size: 10px;
+  cursor: pointer;
+  color: #555;
+  font-weight: bold;
+  text-decoration: none;
+  display: block;
+  float: left;
+  width: 55px;
+  padding: 5px 0;
+  text-align: center;
+  background: #ccc;
+  border: 1px solid #bbb;
+  border-left: 0;
+  border-bottom: 0;
+}
+
+.tab-link:hover {
+  background: #eee;
+}
+
+.tab-link:nth-of-type(1) {
+  border-left: 1px solid #bbb;
+}
+
+.tab-link:hover {
+  color: #666;
+}
+
+.tab {
+  clear: both;
+  display: none;
+  height: 850px;
+  border: 1px solid #bbb;
+}
+
+.target-fix {
+  display: block;
+  top: 0;
+  left: 0;
+  position: fixed;
+}
+
+#tabC:target ~ a:nth-of-type(3),
+#tabB:target ~ a:nth-of-type(2),
+#tabC:not(:target) ~ #tabB:not(:target) ~ a:nth-of-type(1){
+  background: #ddd;
+}
+
+
+#tabC:target ~ a:nth-of-type(3):after,
+#tabB:target ~ a:nth-of-type(2):after,
+#tabC:not(:target) ~ #tabB:not(:target) ~ a:nth-of-type(1):after{
+  position: absolute;
+  content: "";
+  margin: 5px 0 0 0;
+  width: 55px;
+  height: 1px;
+  display: block;
+  background: #ddd;
+}
+</style>
+    <link href="styles.css" rel="stylesheet">
+</head>
+
+<body>
+    <div style="width:100%;height:15px;">
+        <ul style="width:30%;float:left;margin:0;">
+            <li><b>Create New Node</b>: Drag and Drop node from a tree on to Editor.</li>
+            <li><b>Right click</b> to edit Node, Link</li>
+        </ul>
+        <ul style="width:30%;float:left;margin:0;">
+            <li><b>Ctrl+Left Click and Mouse Move</b>: to moves Nodes around</li>
+            <li>click on a node and then drag to another node to connect them with a directed edge</li>
+        </ul>
+        <ul style="width:30%;float:left;margin:0;">
+            <li>Supports multiple Edges between 2 Nodes</li>
+            <li><b>To delete Node/Edge:</b> click on node or edge and press backspace/delete</li>
+        </ul>
+    </div>
+    <div class="container">
+        <section class="tabs">
+            <input id="tab-1" type="radio" name="radio-set" class="tab-selector-1" />
+            <label for="tab-1" class="tab-label-1">TREE</label>
+    
+            <input id="tab-2" type="radio" name="radio-set" class="tab-selector-2" checked="checked" />
+            <label for="tab-2" class="tab-label-2">GRAPH</label>
+    
+            <input id="tab-3" type="radio" name="radio-set" class="tab-selector-3" />
+            <label for="tab-3" class="tab-label-3">TAB 3</label>
+        
+            <input id="tab-4" type="radio" name="radio-set" class="tab-selector-4" />
+            <label for="tab-4" class="tab-label-4">TAB 4</label>
+        
+            <div class="clear-shadow"></div>
+            
+            <div class="cntnt">
+
+                <div class="cntnt-1">
+                    <div id="labelTreeEditor" oncontextmenu="return false;">
+                        <button style="color:white;padding:10px;float:right;border:none;background-color:blue;margin:2px;">SAVE GRAPH</button>
+                         
+                        <ul>
+                            <li>Double Click on Node to create New Child Nodes</li>
+                            <li>To Deelte Node and its Child Nodes, click on Node and use Delete/BackSpace button</li>
+                        </ul>
+                    </div>
+
+                </div>
+                <div class="cntnt-2">
+
+                        <section class="tab-area tabs-target" style="float:left;">
+                            <span class="target-fix" id="tabC"></span>
+                            <span class="target-fix" id="tabB"></span>
+                            <a class="tab-link" href="#tabA">Nodes A</a>
+                            <a class="tab-link" href="#tabB">Nodes B</a>
+                            <article class="tab">
+                                <span id="labelTree">
+
+                                </span>
+                            </article>
+                            <article class="tab">
+                                <span id="functionBoxes">
+                                </span>
+                            </article>
+                        </section>
+                        <section id="graphEditor" class="rightSvg" style="float:left;">
+                                <div id="legend">
+                                    <svg height="50" width="80">
+                                        <text x="5" y="8" font-size="10">Edge Types</text>
+                                        <path stroke="#848482" d="M5 18 l15 0" /><path stroke="#848482" d="M5 20 l15 0" /><text x="25" y="20" font-size="8">TYPE A</text>
+                                        <path stroke="#848482" d="M5 28 l15 0" /><text x="25" y="30" font-size="8">TYPE B</text>
+                                        <path stroke="red" d="M5 38 l15 0" /><text x="25" y="40" font-size="8">TYPE C</text>
+                                        <path stroke="#848482" stroke-dasharray="5,5" d="M5 48 l15 0" /><text x="25" y="50" font-size="8">TYPE D</text>
+                                    </svg>
+                                </div>
+                                
+                                <button style="color:white;padding:10px;float:right;border:none;background-color:blue;margin:2px;">SAVE GRAPH</button>
+                                    
+                        </section>
+                </div>
+                
+                <div class="cntnt-3">
+                    
+                </div>
+                <div class="cntnt-4">
+                    
+                </div>
+            </div>
+        </section>
+    </div>
+
+<ul id="context-menu" class="menu">
+    <li class="edge">
+        <form id="edgeDailog">
+            <h4 style="color:white;background-color: cornflowerblue;margin:0;font-size: 20px;">Create an Edge</h4>
+            <div class="content">
+                <br>
+                Source: clients<br>
+                Target: servers<br><br>
+                <b>Type:</b><br>
+                <select id="edgeType" name="edgeType">
+                    <option value="MUST">TYPE A</option>
+                    <option value="CAN">TYPE B</option>
+                    <option value="BLOCK">TYPE C</option>
+                    <option value="CONDITIONAL">TYPE D</option>
+                </select>
+                <br><br>
+
+                <table id="classifiers">
+                    <tr>
+                        <td><b>Port</b></td>
+                        <td><b>Protocol</b></td>
+                        <td></td>
+                    </tr>
+                    <tr style="height: 50px;border-bottom:none;">
+
+                        <td><input type="text" size="10" id="port" name="port" value=""></td>
+                        <td><input type="text" size="10" id="protocol" name="protocol" value=""></td>
+                        <td><button class="" id="addRowBtn" onclick="addRowToTable(this.form.edgeType.value, this.form.port.value,this.form.protocol.value);">Add</button></td>
+                    </tr>
+                </table>
+
+                <br>
+                <br>
+
+
+                <form>
+                    <div style="clear: left;">
+                        <input type="button" onclick="PolicyGraphs.prototype.addLabelsForEdge(this.form.edgeType.value);" id="" name="" value="OK">
+                        <input type="button" onclick="PolicyGraphs.prototype.closeContextMenu();" style="float: right;" value="Cancel">
+                    </div>
+                </form>
+            </div>
+        </form>
+    </li>
+    <li class="editEdge">
+        <form id="editEdgeDailog">
+            <h4 style="color:white;background-color: cornflowerblue;margin:0;font-size: 20px;">Edit an Edge</h4>
+            <div class="content">
+                <br>
+                Source: clients<br>
+                Target: servers<br><br>
+
+                <table id="classifiers"></table>
+
+                <br>
+                <br>
+                <form>
+                    <div style="clear: left;">
+                        <input type="button" onclick="PolicyGraphs.prototype.addLabelsForEdge(this.form.type.value);" id="" name="" value="OK">
+                        <input type="button" onclick="PolicyGraphs.prototype.closeContextMenu();" style="float: right;" value="Cancel">
+                    </div>
+                </form>
+
+            </div>
+        </form>
+    </li>
+
+    <li class="epg">
+      <form id="editEPGsDailog" name="editEPGsDailog">
+        <h4 style="color:white;background-color: cornflowerblue;margin:0;font-size: 20px;">Edit EPG</h4>
+        <div class="content">
+            <p><label>Name<br>
+                <span id="epgname"></span>
+            <p><label>Description<br>
+                <textarea required id="epg_description" name="epg_description" cols="32" rows="8" width="200"></textarea></label></p>
+            <input type="button" onclick="PolicyGraphs.prototype.updateNode(document.getElementById('epg_description').value);" id="feedbackForm" name="feedbackForm" value="OK">
+            <input type="button" onclick="PolicyGraphs.prototype.closeContextMenu();" style="float: right;" value="Cancel">
+        </div>
+    </form>
+    </li>
+    <li class="fnbx">
+        <form id="insertFnBxDailog">
+            <h4 style="color:white;background-color: cornflowerblue;margin:0;font-size: 20px;"><span id="fnBxHeader"></span> Function Box</h4>
+            <div class="content">
+                <br>
+                Name: <span id="fnBxName"></span><br><br>
+                <b>Inputs:</b>
+                <table id="fnBxParameters">
+
+                </table>
+                <br>
+                <br>
+                <form>
+                    <div style="clear: left;">
+                        <input type="button" onclick="PolicyGraphs.prototype.insertFnBx();" name="" value="OK">
+                        <input type="button" onclick="PolicyGraphs.prototype.closeContextMenu();" style="float: right;" value="Cancel">
+                    </div>
+                </form>
+            </div>
+        </form>
+    </li>
+
+    <li class="label">
+        <form id="labelEditDailog">
+            <h4 style="color:white;background-color: cornflowerblue;margin:0;font-size: 20px;">Edit Label</h4>
+            <div class="content">
+                <label>Name<br>
+                <input type="text" autofocus required size="25" id="labelname" name="labelname" value="Node"></label>
+                <p><label>Description<br>
+                    <textarea required id="labeldesc" name="labeldesc" cols="32" rows="8" width="200px;"></textarea></label></p>
+
+                <form>
+                    <div style="clear: left;">
+                        <input type="button" onclick="PGA.LabelTree.prototype.updateLabelInfo(this.form.labelname.value);" id="feedbackForm" name="feedbackForm" value="OK">
+                        <input type="button" onclick="PGA.LabelTree.prototype.closeContextMenu();" style="float: right;" id="modal_close" value="Cancel">
+                    </div>
+                </form>
+            </div>
+        </form>
+    </li>
+</ul>
+<script type="text/javascript" src="main.js"></script>
+<script type="text/javascript" src="graph.js"></script>
+<script type="text/javascript">
+var graphData = {"policy_graph": {"nodes": [{"endpoint_group": {"labels": ["web"]}, "id": "1"}, {"endpoint_group": {"labels": ["clients"]}, "id": "2"}, {"endpoint_group": {"labels": ["DB"]}, "id": "3"}, {"function_box": {"inputs": {}, "logic": null, "name": "FW", "outputs": {}, "description": null}, "id": "4"}, {"function_box": {"inputs": {}, "logic": null, "name": "FW", "outputs": {}, "description": null}, "id": "5"}, {"function_box": {"inputs": {}, "logic": null, "name": "LB", "outputs": {}, "description": null}, "id": "6"}, {"function_box": {"inputs": {}, "logic": null, "name": "DPI", "outputs": {}, "description": null}, "id": "7"}, {"function_box": {"inputs": {}, "logic": null, "name": "BC", "outputs": {}, "description": null}, "id": "8"}, {"function_box": {"inputs": {}, "logic": null, "name": "FW", "outputs": {}, "description": null}, "id": "9"}, {"function_box": {"inputs": {}, "logic": null, "name": "LB", "outputs": {}, "description": null}, "id": "10"}, {"function_box": {"inputs": {}, "logic": null, "name": "FW", "outputs": {}, "description": null}, "id": "11"}, {"function_box": {"inputs": {}, "logic": null, "name": "DPI", "outputs": {}, "description": null}, "id": "12"}, {"function_box": {"inputs": {}, "logic": null, "name": "BC", "outputs": {}, "description": null}, "id": "13"}, {"function_box": {"inputs": {}, "logic": null, "name": "FW", "outputs": {}, "description": null}, "id": "14"}, {"function_box": {"inputs": {}, "logic": null, "name": "DPI", "outputs": {}, "description": null}, "id": "15"}, {"function_box": {"inputs": {}, "logic": null, "name": "BC", "outputs": {}, "description": null}, "id": "16"}], "edges": [{"source": "2", "direction": "uni", "type": "CAN", "target": "4", "classifiers": [{"dstport": "22", "protocol": "tcp"}]}, {"source": "4", "direction": "uni", "type": "CAN", "target": "5", "classifiers": [{"dstport": "22", "protocol": "tcp"}]}, {"source": "5", "direction": "uni", "type": "CAN", "target": "6", "classifiers": [{"dstport": "22", "protocol": "tcp"}]}, {"source": "6", "direction": "uni", "type": "CAN", "target": "7", "classifiers": [{"dstport": "22", "protocol": "tcp"}]}, {"source": "7", "direction": "uni", "type": "CAN", "target": "8", "classifiers": [{"dstport": "22", "protocol": "tcp"}]}, {"source": "8", "direction": "uni", "type": "CAN", "target": "1", "classifiers": [{"dstport": "22", "protocol": "tcp"}]}, {"source": "2", "direction": "uni", "type": "CAN", "target": "9", "classifiers": [{"dstport": "23:8080", "protocol": "tcp"}]}, {"source": "9", "direction": "uni", "type": "CAN", "target": "10", "classifiers": [{"dstport": "23:8080", "protocol": "tcp"}]}, {"source": "10", "direction": "uni", "type": "CAN", "target": "1", "classifiers": [{"dstport": "23:8080", "protocol": "tcp"}]}, {"source": "2", "direction": "uni", "type": "CAN", "target": "11", "classifiers": [{"protocol": "icmp"}]}, {"source": "11", "direction": "uni", "type": "CAN", "target": "12", "classifiers": [{"protocol": "icmp"}]}, {"source": "12", "direction": "uni", "type": "CAN", "target": "13", "classifiers": [{"protocol": "icmp"}]}, {"source": "13", "direction": "uni", "type": "CAN", "target": "1", "classifiers": [{"protocol": "icmp"}]}, {"source": "2", "direction": "uni", "type": "CAN", "target": "14", "classifiers": [{"protocol": "icmp"}, {"dstport": "22", "protocol": "tcp"}]}, {"source": "14", "direction": "uni", "type": "CAN", "target": "15", "classifiers": [{"protocol": "icmp"}, {"dstport": "22", "protocol": "tcp"}]}, {"source": "15", "direction": "uni", "type": "CAN", "target": "16", "classifiers": [{"protocol": "icmp"}, {"dstport": "22", "protocol": "tcp"}]}, {"source": "16", "direction": "uni", "type": "CAN", "target": "3", "classifiers": [{"protocol": "icmp"}, {"dstport": "22", "protocol": "tcp"}]}, {"source": "1", "direction": "uni", "type": "CAN", "target": "3", "classifiers": [{"dstport": "3306", "protocol": "tcp"}]}, {"source": "3", "direction": "uni", "type": "CAN", "target": "3", "classifiers": [{"dstport": "7000", "protocol": "tcp"}]}], "name": "composed_graph"}};
+
+var labelTreeSpec = [
+    {
+        "label_tree": {
+            "lastNodeId": 12,
+            "nodeData": [
+                {
+                    "nodeId": "id_1",
+                    "parent": "id_null",
+                    "name": "node1"
+                },
+                {
+                    "nodeId": "id_2",
+                    "parent": "id_1",
+                    "name": "node2"
+                },
+                {
+                    "nodeId": "id_3",
+                    "parent": "id_1",
+                    "name": "node3"
+                },
+                {
+                    "nodeId": "id_4",
+                    "parent": "id_2",
+                    "name": "node4"
+                },
+                {
+                    "nodeId": "id_5",
+                    "parent": "id_2",
+                    "name": "node5"
+                }
+            ]
+        }
+    },
+    {
+        "label_tree": {
+            "lastNodeId": 12,
+            "nodeData": [
+                {
+                    "nodeId": "id_6",
+                    "parent": "id_null",
+                    "name": "node6"
+                },
+                {
+                    "nodeId": "id_7",
+                    "parent": "id_6",
+                    "name": "node7"
+                },
+                {
+                    "nodeId": "id_8",
+                    "parent": "id_6",
+                    "name": "node8"
+                }
+            ]
+        }
+    }
+];
+
+//var functionBoxesData = {{ function_boxes|safe }};
+
+var functionBoxesData = {
+  "function_boxes": [
+    {
+      "name": "LB",
+      "type": "LOAD_BALANCER",
+      "parameters":
+        {
+          "protocol": null,
+          "vip_port": null
+        },
+      "description": "Load Balancer"
+    },
+    {
+      "name": "FW",
+      "type": "FIREWALL",
+      "description": "Firewall",
+      "parameters":
+        {
+          "protocol": null,
+          "source_ip": null,
+          "source_port": null,
+          "destination_ip": null,
+          "destination_port": null,
+          "action": null
+        }
+    }
+  ]
+};
+
+
+var labelTreeEditSpec = {"label_tree":{"lastNodeId":7,"nodeData":[{"nodeId":1,"name":"node1","parent":"null"},{"nodeId":2,"name":"node2","parent":1},{"nodeId":3,"name":"node3","parent":2},{"nodeId":4,"name":"node4","parent":2},{"nodeId":5,"name":"node5","parent":3},{"nodeId":6,"name":"node6","parent":3},{"nodeId":7,"name":"node7","parent":1}]}}
+
+$(document).ready(function(){
+    console.log( "ready!" );
+    var labelTreeEDit = new PGA.LabelTree("labelTreeEditor",labelTreeEditSpec,true,false);
+    var labelTree = new PGA.LabelTreeViewer("labelTree",labelTreeSpec,true,false);
+
+
+    var policyGraphs = new PolicyGraphs("graphEditor",graphData, true);
+    //set EPG radius; default 50
+    policyGraphs.setCircleR(50);
+
+
+    policyGraphs.restart();
+
+    $('#save_graph .btn-sm').click(function() {
+        policyGraphs.submitform();
+    });
+
+
+
+
+    var functionBoxes = new PGA.FunctionBoxes("functionBoxes",functionBoxesData);
+
+    $( "#graphEditor" ).mouseenter(function() {
+        PGA.mouseOnEditor = true;
+    });
+
+    $( "#outer" ).mouseleave(function() {
+        PGA.mouseOnEditor = false;
+    });
+
+
+})
+</script>
+</body>
+</html>

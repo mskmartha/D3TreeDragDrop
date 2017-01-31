@@ -1,0 +1,520 @@
+
+#main{
+    width: 98vw;
+    margin:0 2%;
+}
+#mainContainer{
+    width: 94vw;
+    border:1px solid #ddd;
+    height:80vh;
+    padding: 1%;
+
+}
+#shapeSelectWrap{
+    width:92vw;
+    border:1px solid #ddd;
+    height: 164px;
+    padding:1%;
+    margin-bottom:20px;
+}
+#leftWrapper{
+    width: 29vw;
+    height: 160px;
+    float: left;
+    border:1px solid #ddd;
+    margin-right: 20px;
+}
+#rightWrapper{
+    width: 61vw;
+    height: 160px;
+    float: left;
+    border:1px solid #ddd;
+    margin-right: 10px;
+}
+.wrapper{
+    width: 95vw;
+}
+button#save{
+    float:right;
+    margin: 0px 50px;
+    width:260px;
+    background-color: deepskyblue;
+    border: none;
+    height: 60px;
+    color:#ffffff;
+    font-size: 40px;
+    cursor: pointer;
+
+}
+button.edge{
+    float:left;
+    margin: 10px 50px;
+    width:255px;
+    background-color: lightgrey;
+    border: none;
+    height: 70px;
+    color:#ffffff;
+    font-size: 25px;
+    cursor: pointer;
+    font-weight: bold;
+}
+/*
+button:active{
+    float:left;
+    margin: 10px 50px;
+    width:255px;
+    background-color: deepskyblue;
+    border: none;
+    height: 70px;
+    color:#ffffff;
+    font-size: 25px;
+    cursor: pointer;
+    font-weight: bold;
+
+}
+*/
+
+#labelTree{
+    width: 280px;
+    float: left;
+    color:#848482;
+}
+
+#functionBoxes{
+    width: 280px;
+    float: left;
+    color:#848482;
+    height: 600px;
+}
+.rightSvg{
+    width:calc(100% - 300px);
+    border:1px solid #ddd;
+    float:left;
+    margin-left: 5px;
+    color:#848482;
+    margin-top:20px;
+}
+#labelTreeEditor{
+    width:98%;
+    border:1px solid #ddd;
+    float:left;
+    margin-left: 5px;
+    color:#848482;
+}
+
+/* svg css */
+svg {
+    float:left;
+    background-color: #FFF;
+    cursor: default;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+#dropInSVG svg{
+    border: 1px solid #ddd;
+}
+
+svg:not(.active):not(.ctrl) {
+    cursor: crosshair;
+}
+
+circle.node.reflexive {
+    stroke: #848482 !important;
+    stroke-width: 1px;
+}
+svg:not(.active):not(.ctrl) {
+    cursor: crosshair;
+}
+
+path.edge, path.blockedge, path.conditionaledge {
+    fill: none;
+    stroke: #848482;
+   /* stroke-width: 1.5px;*/
+    stroke-width: 1.55px;
+    cursor: default;
+}
+path.blockedge {
+    stroke: red;
+}
+
+path.conditionaledge {
+    stroke-dasharray: 5;
+}
+svg:not(.active):not(.ctrl) path.edge, svg:not(.active):not(.ctrl) path.blockedge {
+    cursor: pointer;
+}
+
+path.edge.selected, path.blockedge.selected {
+    /*stroke-dasharray: 10,2;*/
+    stroke: #C4D8E2;
+}
+
+path.edge.dragline {
+    pointer-events: none;
+}
+
+path.edge.hidden {
+    stroke-width: 0;
+}
+
+
+svg:not(.active):not(.ctrl) text.edgeLabel {
+    cursor: pointer;
+}
+
+
+circle.node {
+    cursor: pointer;
+    fill: #B7CEEC;
+    stroke: #848482;
+    stroke-width: 1.5px;
+    cursor: pointer;
+}
+
+rect.fnBx {
+    cursor: pointer;
+    fill: #fff;
+    stroke: #848482;
+    stroke-width: 1.5px;
+    cursor: pointer;
+}
+
+
+
+circle.node.reflexive {
+    stroke: #848482 !important;
+    stroke-width: 2.5px;
+}
+
+text {
+    font-family: Arial, sans-serif;
+
+/*    font: 20px sans-serif;*/
+    pointer-events: none;
+    color: white;
+
+}
+
+text.id {
+    text-anchor: middle;
+}
+marker#MUST {
+    fill: #848482;
+}
+path.edge.MUST {
+    stroke: #848482;
+}
+.edgeLabel{
+    font-size: 12px;
+}
+
+#modal_window table {
+    border-collapse: collapse;
+}
+
+#modal_window table, #modal_window th, #modal_window td {
+    padding:5px;
+}
+#classifiers tr{
+    border-bottom: 1px dotted #848482;
+}
+
+.node ellipse {
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 1px;
+    cursor: pointer;
+}
+
+.node text {
+    font-family: Arial, sans-serif;
+    font-size:12px;
+    font-weight: bold;
+}
+
+.fnBx text {
+    font-family: Arial, sans-serif;
+    font-size:12px;
+    font-weight: bold;
+}
+.fnBxNode text{
+    font-family: Arial, sans-serif;
+    font-size:12px;
+    font-weight: bold;
+}
+
+#top{
+    display: none;
+}
+
+
+.link {
+    fill: none;
+    stroke: #848482;
+    stroke-width: 2px;
+}
+#helperSvg {
+    position: fixed;
+    background: transparent;
+    opacity: 0.5;
+    z-index: 300;
+    left: 230px;
+    top: 125px;
+}
+#helperSvg ellipse{
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 1px;
+    cursor: pointer;
+}
+#helperSvg text{
+    text-anchor: middle;
+    font-size: 12px;
+}
+
+#fnBxHelperSvg {
+    position: fixed;
+    background: transparent;
+    opacity: 0.5;
+    border:1px solid black;
+}
+#fnBxHelperSvg rect{
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 1px;
+    cursor: pointer;
+}
+#fnBxHelperSvg text{
+    text-anchor: middle;
+    font-size: 12px;
+}
+
+
+h1{
+    font-size:40px;
+    margin-left:50px;
+}
+path.link {
+    fill: none;
+    stroke: #666;
+}
+marker#MUST {
+    fill: black;
+}
+path.link.MUST {
+    stroke: black;
+}
+.cnode ellipse {
+    fill: lightgreen;
+    stroke: steelblue;
+    stroke-width: 3px;
+    cursor: pointer;
+}
+.cnode circle {
+    fill: lightgreen;
+    stroke: steelblue;
+    stroke-width: 3px;
+    cursor: pointer;
+}
+.cnode text {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.link text {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+rect {
+    fill: #ffcc66;
+    stroke: black;
+    stroke-width: 1px;
+    cursor: pointer;
+}
+.fnBox text {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+line {
+    stroke-width: 1.5px;
+    stroke-opacity: 1.0;
+    stroke: #000;
+}
+
+
+/* tabs */
+
+
+.leftSvg {
+    margin: 0 auto;
+    width: 350px;  /* Ancho del contenedor */
+    float:left;
+    border:1px solid #ddd;
+    margin-top:20px;
+}
+
+.leftSvg input {
+	height: 2.5em;
+	visibility: hidden;
+}
+
+.leftSvg label {
+	background: #f9f9f9;  /* Fondo de las pestañas */
+	border-radius: .25em .25em 0 0;
+	color: #888;  /* Color del texto de las pestañas */
+	cursor: pointer;
+	display: block;
+	float: left;
+	font-size: 1em;  /* Tamaño del texto de las pestañas */
+	height: 2.5em;
+	line-height: 2.5em;
+	margin-right: .25em;
+	padding: 0 1.5em;
+	text-align: center;
+}
+
+.leftSvg input:hover + label {
+	background: #ddd;  /* Fondo de las pestañas al pasar el cursor por encima */
+	color: #666;  /* Color del texto de las pestañas al pasar el cursor por encima */
+}
+
+.leftSvg input:checked + label {
+	background: #f1f1f1;  /* Fondo de las pestañas al presionar */
+	color: #444; /* Color de las pestañas al presionar */
+	position: relative;
+	z-index: 6;
+	/*
+	-webkit-transition: .1s;
+	-moz-transition: .1s;
+	-o-transition: .1s;
+	-ms-transition: .1s;
+	*/
+}
+
+#content {
+	border-radius: 0 .25em .25em .25em;
+	min-height: 1050px;  /* Alto del contenido */
+	position: relative;
+	width: 100%;
+	z-index: 5;
+}
+
+#content div {
+	opacity: 0;
+	position: absolute;
+	z-index: -100;
+	/*
+	transition: all linear 0.1s;
+	*/
+}
+
+.leftSvg input#tab-1:checked ~ #content #content-1,
+.leftSvg input#tab-2:checked ~ #content #content-2 {
+    opacity: 1;
+    z-index: 100;
+    padding-top: 50px;
+}
+
+input.visible {
+  visibility: visible !important;
+}
+
+.popup {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: #fff;
+    width: 200px;
+    border: 1px #ccc solid;
+    border-radius: 6px;
+    box-shadow: #333 2px 2px 4px;
+    padding: 8px;
+    font-family: arial, helvetica, sans-serif;
+}
+.popup h2 {
+    margin: 0 0 1rem 0;
+}
+
+/*********/
+.menu {
+    display: none;
+    position: relative;
+}
+.menu,
+.menu li {
+    padding: 0px;
+    margin: 0px;
+}
+
+.menu li {
+display: none;
+}
+
+.menu.svg li.svg ,
+.menu.svg li.svg li,
+.menu.fnbx li.fnbx ,
+.menu.edge li.edge ,
+.menu.label li.label ,
+.menu.epg li.epg li,
+.menu.epg li.epg {
+display: block;
+}
+/* Support sub menu */
+.menu li ul {
+display:none;
+}
+.menu li:hover ul {
+display:inline-block;
+position: relative;
+top: 0;
+}
+
+/* context-menu */
+#context-menu{
+    display: none;
+    z-index: 999;
+    position: absolute;
+    left: 50%;
+    top: 500px;
+    width: auto;
+    background: #fff;
+    border: 10px solid cornflowerblue;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+
+}
+#labelEditDailog{
+    font-size: 14px;
+
+}
+#context-menu input[type='button'] {
+    background-color: cornflowerblue;
+    color: white;
+    font-size: 20px;
+    border: none;
+    cursor: pointer;
+}
+#context-menu .content{
+    padding:10px;
+}
+#context-menu textarea{
+    width:240px;
+}
+
+#legend{
+    color:#848482;
+    position: absolute;
+    margin: 10px;
+    border: 1px solid #848482;
+    padding: 5px;
+    z-index:300;
+    background: white;
+}
